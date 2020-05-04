@@ -53,7 +53,7 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE,
     phone_number BIGINT UNSIGNED UNIQUE,
     username VARCHAR(50) UNIQUE,
-    password_hash VARCHAR(200)
+    password_hash VARCHAR(100)
 );
 
 DROP TABLE IF EXISTS user_profiles;
@@ -63,12 +63,12 @@ CREATE TABLE user_profiles (
     updated_at TIMESTAMP DEFAULT now(),
 
     avatar BIGINT UNSIGNED NOT NULL,
-    first_name VARCHAR(100) DEFAULT 'Anonymous',
-    last_name VARCHAR(100) DEFAULT NULL,
-    gender ENUM ('male', 'female', 'other', '-') DEFAULT '-',
+    first_name VARCHAR(100) DEFAULT '',
+    last_name VARCHAR(100) DEFAULT '',
+    gender CHAR(1) DEFAULT '-',
     date_of_birth DATE DEFAULT NULL,
     country_id BIGINT UNSIGNED NOT NULL,
-    about VARCHAR(350) DEFAULT NULL,
+    about VARCHAR(350) DEFAULT '',
 
     is_private BIT DEFAULT 0,
 
@@ -84,7 +84,7 @@ CREATE TABLE messages (
     to_user BIGINT UNSIGNED NOT NULL,
     created_at TIMESTAMP DEFAULT now(),
 
-    body_text TEXT NOT NULL,
+    body_text TEXT NOT NULL DEFAULT '',
 
     FOREIGN KEY (`from_user`) REFERENCES `users`(`id`),
     FOREIGN KEY (`to_user`) REFERENCES `users`(`id`)
@@ -95,8 +95,8 @@ CREATE TABLE messages (
 DROP TABLE IF EXISTS titles;
 CREATE TABLE titles (
     id SERIAL PRIMARY KEY,
-    title_rus VARCHAR(200),
-    title_eng VARCHAR(200)
+    title_rus VARCHAR(100) NOT NULL,
+    title_eng VARCHAR(100) NOT NULL DEFAULT ''
 );
 
 DROP TABLE IF EXISTS title_info;
@@ -108,8 +108,8 @@ CREATE TABLE title_info (
     country_id BIGINT UNSIGNED NOT NULL,
     tagline_rus VARCHAR(200) NOT NULL DEFAULT '',
     tagline_eng VARCHAR(200) NOT NULL DEFAULT '',
-    synopsis_rus VARCHAR(300) NOT NULL DEFAULT '',
-    synopsis_eng VARCHAR(300) NOT NULL DEFAULT '',
+    synopsis_rus VARCHAR(500) NOT NULL DEFAULT '',
+    synopsis_eng VARCHAR(500) NOT NULL DEFAULT '',
     release_date DATE NOT NULL,
 
     FOREIGN KEY (`title_id`) REFERENCES `titles`(`id`),
@@ -121,8 +121,8 @@ DROP TABLE IF EXISTS series_info;
 CREATE TABLE series_info (
     id SERIAL PRIMARY KEY,
     title_id BIGINT UNSIGNED NOT NULL,
-    seasons MEDIUMINT UNSIGNED NOT NULL DEFAULT 1,
-    episodes SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+    seasons SMALLINT UNSIGNED NOT NULL DEFAULT 1,
+    episodes MEDIUMINT UNSIGNED NOT NULL DEFAULT 1,
     conclude_date DATE NOT NULL DEFAULT current_date,
 
     FOREIGN KEY (`title_id`) REFERENCES `titles`(`id`)
@@ -134,9 +134,9 @@ CREATE TABLE movies_info (
     title_id BIGINT UNSIGNED NOT NULL,
     rars ENUM (0, 6, 12, 16, 18) DEFAULT 18, -- Возрастная классификация информационной продукции
     mpaa ENUM ('G', 'PG', 'PG-13', 'R', 'NC-17', 'NR') DEFAULT 'NR', -- Система рейтингов Американской киноассоциации
-    budget BIGINT UNSIGNED,
-    box_office BIGINT UNSIGNED,
-    viewership BIGINT UNSIGNED,
+    budget INT UNSIGNED DEFAULT 0,
+    box_office INT UNSIGNED DEFAULT 0,
+    viewership INT UNSIGNED DEFAULT 0,
 
     FOREIGN KEY (`title_id`) REFERENCES `titles`(`id`)
 );
@@ -171,7 +171,7 @@ CREATE TABLE people (
     last_name_rus VARCHAR(200),
     last_name_eng VARCHAR(200),
     date_of_birth DATE,
-    date_of_death DATE,
+    date_of_death DATE DEFAULT NULL,
     photo BIGINT UNSIGNED NOT NULL,
     country_id BIGINT UNSIGNED NOT NULL,
 
@@ -248,7 +248,7 @@ CREATE TABLE reviews (
     id SERIAL PRIMARY KEY,
     title_id BIGINT UNSIGNED NOT NULL,
     user_id BIGINT UNSIGNED NOT NULL,
-    body VARCHAR(400),
+    body VARCHAR(500),
     is_positive BIT DEFAULT 1,
     created_at TIMESTAMP DEFAULT now(),
 
@@ -296,7 +296,7 @@ DROP TABLE IF EXISTS user_lists;
 CREATE TABLE user_lists (
     id SERIAL PRIMARY KEY,
     user_id BIGINT UNSIGNED NOT NULL,
-    list_name VARCHAR(100) DEFAULT 'My list',
+    list_name VARCHAR(50) DEFAULT '',
     description VARCHAR(100) DEFAULT '',
     is_private BIT DEFAULT 0,
     created_at TIMESTAMP DEFAULT now(),
