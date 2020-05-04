@@ -11,14 +11,14 @@ CREATE TABLE companies (
 DROP TABLE IF EXISTS countries;
 CREATE TABLE countries (
     id SERIAL PRIMARY KEY,
-    country_rus VARCHAR(200)
+    country VARCHAR(200)
     -- , country_eng VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS genres;
 CREATE TABLE genres (
     id SERIAL PRIMARY KEY,
-    genre_rus VARCHAR(200)
+    genre VARCHAR(200)
     -- , genre_eng VARCHAR(200)
 );
 
@@ -32,14 +32,14 @@ CREATE TABLE images (
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
-    role_rus VARCHAR(200)
+    role VARCHAR(200)
     -- , role_eng VARCHAR(200)
 );
 
 DROP TABLE IF EXISTS title_types;
 CREATE TABLE title_types (
     id SERIAL PRIMARY KEY,
-    title_type_rus VARCHAR(200)
+    title_type VARCHAR(200)
     -- , title_type_eng VARCHAR(200)
 );
 
@@ -105,8 +105,8 @@ CREATE TABLE messages (
 DROP TABLE IF EXISTS titles;
 CREATE TABLE titles (
     id SERIAL PRIMARY KEY,
-    title_rus VARCHAR(100) NOT NULL
-    -- , title_eng VARCHAR(100) NOT NULL DEFAULT ''
+    title VARCHAR(100) NOT NULL,
+    original_title VARCHAR(100) NOT NULL DEFAULT ''
 );
 
 DROP TABLE IF EXISTS title_info;
@@ -116,9 +116,9 @@ CREATE TABLE title_info (
     title_type_id BIGINT UNSIGNED,
     poster BIGINT UNSIGNED,
     country_id BIGINT UNSIGNED NOT NULL,
-    tagline_rus VARCHAR(200) NOT NULL DEFAULT '',
+    tagline VARCHAR(200) NOT NULL DEFAULT '',
     -- tagline_eng VARCHAR(200) NOT NULL DEFAULT '',
-    synopsis_rus VARCHAR(500) NOT NULL DEFAULT '',
+    synopsis VARCHAR(500) NOT NULL DEFAULT '',
     -- synopsis_eng VARCHAR(500) NOT NULL DEFAULT '',
     release_date DATE NOT NULL,
 
@@ -194,9 +194,9 @@ CREATE TABLE title_company (
 DROP TABLE IF EXISTS people;
 CREATE TABLE people (
     id SERIAL PRIMARY KEY,
-    first_name_rus VARCHAR(200),
+    first_name VARCHAR(200),
     -- first_name_eng VARCHAR(200),
-    last_name_rus VARCHAR(200),
+    last_name VARCHAR(200),
     -- last_name_eng VARCHAR(200),
     date_of_birth DATE,
     date_of_death DATE DEFAULT NULL,
