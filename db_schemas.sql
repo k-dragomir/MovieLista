@@ -125,6 +125,8 @@ DROP TABLE IF EXISTS movies_info;
 CREATE TABLE movies_info (
     id SERIAL PRIMARY KEY,
     title_id BIGINT UNSIGNED NOT NULL,
+    rars ENUM (0, 6, 12, 16, 18) DEFAULT 18, -- Возрастная классификация информационной продукции
+    mpaa ENUM ('G', 'PG', 'PG-13', 'R', 'NC-17', 'NR') DEFAULT 'NR', -- Система рейтингов Американской киноассоциации
     budget BIGINT UNSIGNED,
     box_office BIGINT UNSIGNED,
     viewership BIGINT UNSIGNED,
