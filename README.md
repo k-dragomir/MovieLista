@@ -1,5 +1,5 @@
 # MovieLista
- Course project for GeekBrains Databases course
+Курсовая работа по базам данных (GeekUniversity, факультет Аналитики Big Data)
 
  ## Требования к курсовому проекту
  - [ ] Составить общее текстовое описание БД и решаемых ею задач;
