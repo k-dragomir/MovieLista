@@ -2,6 +2,8 @@ DROP DATABASE IF EXISTS movielista;
 CREATE DATABASE movielista;
 USE movielista;
 
+-- ----------------------------------- GENERAL INFO
+
 DROP TABLE IF EXISTS companies;
 CREATE TABLE companies (
 	id SERIAL PRIMARY KEY,
@@ -579,19 +581,17 @@ CREATE TABLE deleted_users (
 	password_hash VARCHAR(100),
 
 	deleted_at TIMESTAMP DEFAULT now()
-
 );
 
 DROP TABLE IF EXISTS deleted_titles;
 CREATE TABLE deleted_titles (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED NOT NULL UNIQUE,
 	title VARCHAR(100) NOT NULL,
-	original_title VARCHAR(100) NOT NULL DEFAULT '',
+	original_title VARCHAR(100) NOT NULL,
 
 	deleted_at TIMESTAMP DEFAULT now(),
 
-	INDEX (title_id),
 	INDEX (title),
 	INDEX (original_title)
 );
