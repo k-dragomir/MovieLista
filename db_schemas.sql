@@ -123,14 +123,13 @@ CREATE TABLE title_info (
 	title_id BIGINT UNSIGNED NOT NULL,
 	title_type_id BIGINT UNSIGNED,
 	poster BIGINT UNSIGNED,
-	country_id BIGINT UNSIGNED NOT NULL,
+	country_id BIGINT UNSIGNED,
 	tagline VARCHAR(200) NOT NULL DEFAULT '',
 	-- tagline_eng VARCHAR(200) NOT NULL DEFAULT '',
 	synopsis VARCHAR(500) NOT NULL DEFAULT '',
 	-- synopsis_eng VARCHAR(500) NOT NULL DEFAULT '',
-	release_date DATE NOT NULL,
+	release_date DATE,
 
-	is_series BIGINT DEFAULT 0,
 	title_deleted BIT DEFAULT 0,
 
 	INDEX (release_date),
