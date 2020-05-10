@@ -477,40 +477,6 @@ CREATE TABLE follow_list (
 		ON UPDATE CASCADE
 );
 
--- ----------------------------------- GALLERIES
-
-DROP TABLE IF EXISTS title_gallery;
-CREATE TABLE title_gallery (
-    id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED,
-	image_id BIGINT UNSIGNED NOT NULL,
-
-	title_del_id BIGINT DEFAULT NULL,
-
-	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE,
-	FOREIGN KEY (image_id) REFERENCES images (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
-);
-
-DROP TABLE IF EXISTS people_gallery;
-CREATE TABLE people_gallery (
-	people_id BIGINT UNSIGNED NOT NULL,
-	image_id BIGINT UNSIGNED NOT NULL,
-
-	PRIMARY KEY (people_id, image_id),
-
-	FOREIGN KEY (people_id) REFERENCES people (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE,
-	FOREIGN KEY (image_id) REFERENCES images (id)
-		ON DELETE CASCADE
-		ON UPDATE CASCADE
-);
-
-
 -- ----------------------------------- DELETED TO RESTORE
 
 DROP TABLE IF EXISTS deleted_users;
