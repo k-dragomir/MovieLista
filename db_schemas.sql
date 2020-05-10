@@ -61,7 +61,7 @@ CREATE TABLE users (
 DROP TABLE IF EXISTS user_profiles;
 CREATE TABLE user_profiles (
 	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL,
+	user_id BIGINT UNSIGNED,
 	updated_at TIMESTAMP DEFAULT now(),
 
 	avatar BIGINT UNSIGNED,
@@ -73,12 +73,12 @@ CREATE TABLE user_profiles (
 	about VARCHAR(350) DEFAULT '',
 
 	is_private BIT DEFAULT 0,
-	user_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
 
 	INDEX user_name_idx (first_name, last_name),
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (avatar) REFERENCES images (id)
 		ON DELETE SET NULL
@@ -91,17 +91,17 @@ CREATE TABLE user_profiles (
 DROP TABLE IF EXISTS messages;
 CREATE TABLE messages (
 	id SERIAL PRIMARY KEY,
-	from_user BIGINT UNSIGNED NOT NULL,
-	to_user BIGINT UNSIGNED NOT NULL,
+	from_user BIGINT UNSIGNED,
+	to_user BIGINT UNSIGNED,
 	created_at TIMESTAMP DEFAULT now(),
 
 	body_text TEXT NOT NULL,
 
 	FOREIGN KEY (from_user) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (to_user) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
@@ -120,7 +120,7 @@ CREATE TABLE titles (
 DROP TABLE IF EXISTS title_info;
 CREATE TABLE title_info (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	title_type_id BIGINT UNSIGNED,
 	poster BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
@@ -130,12 +130,12 @@ CREATE TABLE title_info (
 	-- synopsis_eng VARCHAR(500) NOT NULL DEFAULT '',
 	release_date DATE,
 
-	title_deleted BIT DEFAULT 0,
+	title_del_id BIGINT DEFAULT NULL,
 
 	INDEX (release_date),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (title_type_id) REFERENCES title_types (id)
 		ON DELETE SET NULL
@@ -148,31 +148,31 @@ CREATE TABLE title_info (
 DROP TABLE IF EXISTS series_info;
 CREATE TABLE series_info (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	seasons SMALLINT UNSIGNED NOT NULL DEFAULT 1,
 	episodes MEDIUMINT UNSIGNED NOT NULL DEFAULT 1,
 	conclude_date DATE,
 
-	title_deleted BIT DEFAULT 0,
+	title_del_id BIGINT DEFAULT NULL,
 
 	INDEX (seasons),
 	INDEX (episodes),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS movies_info;
 CREATE TABLE movies_info (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	rars ENUM ('0+', '6+', '12+', '16+', '18+', 'NR') DEFAULT 'NR',  -- Возрастная классификация информационной продукции
 	mpaa ENUM ('G', 'PG', 'PG-13', 'R', 'NC-17', 'NR') DEFAULT 'NR', -- Система рейтингов Американской киноассоциации
 	budget INT UNSIGNED DEFAULT 0,
 	box_office INT UNSIGNED DEFAULT 0,
 
-	title_deleted BIT DEFAULT 0,
+	title_del_id BIGINT DEFAULT NULL,
 
 	INDEX (rars),
 	INDEX (mpaa),
@@ -180,7 +180,7 @@ CREATE TABLE movies_info (
 	INDEX (box_office),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
@@ -189,13 +189,13 @@ CREATE TABLE movies_info (
 DROP TABLE IF EXISTS title_country;
 CREATE TABLE title_country (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
 
-	title_deleted BIT DEFAULT 0,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (country_id) REFERENCES countries (id)
 		ON DELETE SET NULL
@@ -205,13 +205,13 @@ CREATE TABLE title_country (
 DROP TABLE IF EXISTS title_company;
 CREATE TABLE title_company (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	company_id BIGINT UNSIGNED,
 
-	title_deleted BIT DEFAULT 0,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (company_id) REFERENCES companies (id)
 		ON DELETE SET NULL
@@ -243,14 +243,14 @@ CREATE TABLE people (
 DROP TABLE IF EXISTS title_cast_crew;
 CREATE TABLE title_cast_crew (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	role_id BIGINT UNSIGNED,
 	people_id BIGINT UNSIGNED,
 
-	title_deleted BIT DEFAULT 0,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (role_id) REFERENCES roles (id)
 		ON DELETE SET NULL
@@ -280,90 +280,90 @@ CREATE TABLE keywords (
 DROP TABLE IF EXISTS title_keyword;
 CREATE TABLE title_keyword (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	keyword_id BIGINT UNSIGNED NOT NULL,
 	user_id BIGINT UNSIGNED,
 	vote BIT,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
-	title_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (keyword_id) REFERENCES keywords (id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS title_genre;
 CREATE TABLE title_genre (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	genre_id BIGINT UNSIGNED NOT NULL,
 	user_id BIGINT UNSIGNED,
 	vote BIT,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
-	title_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (genre_id) REFERENCES genres (id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS rating;
 CREATE TABLE rating (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	user_id BIGINT UNSIGNED,
 	rating TINYINT UNSIGNED NOT NULL DEFAULT 0,
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
-	title_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
+	title_del_id BIGINT DEFAULT NULL,
 
 	INDEX (rating),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS reviews;
 CREATE TABLE reviews (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	user_id BIGINT UNSIGNED,
 	body VARCHAR(500),
 	is_positive BIT DEFAULT 1,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
-	title_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
+	title_del_id BIGINT DEFAULT NULL,
 
 	INDEX (is_positive),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
@@ -375,13 +375,13 @@ CREATE TABLE review_votes (
 	vote BIT,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (review_id) REFERENCES reviews (id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
@@ -390,55 +390,55 @@ CREATE TABLE review_votes (
 DROP TABLE IF EXISTS watchlist;
 CREATE TABLE watchlist (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
-	user_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
+	user_id BIGINT UNSIGNED,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
-	title_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS is_seen;
 CREATE TABLE is_seen (
 	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL,
-	user_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
+	user_id BIGINT UNSIGNED,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
-	title_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
 DROP TABLE IF EXISTS user_lists;
 CREATE TABLE user_lists (
 	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL,
+	user_id BIGINT UNSIGNED,
 	list_name VARCHAR(50) DEFAULT '''',
 	description VARCHAR(100) DEFAULT '''',
 	is_private BIT DEFAULT 0,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
 
 	INDEX (list_name),
 	INDEX (is_private),
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
@@ -446,16 +446,16 @@ DROP TABLE IF EXISTS user_list_items;
 CREATE TABLE user_list_items (
 	id SERIAL PRIMARY KEY,
 	list_id BIGINT UNSIGNED NOT NULL,
-	title_id BIGINT UNSIGNED NOT NULL,
+	title_id BIGINT UNSIGNED,
 	created_at TIMESTAMP DEFAULT now(),
 
-	title_deleted BIT DEFAULT 0,
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (list_id) REFERENCES user_lists (id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
@@ -480,15 +480,15 @@ CREATE TABLE follow_user (
 DROP TABLE IF EXISTS follow_keyword;
 CREATE TABLE follow_keyword (
 	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL,
+	user_id BIGINT UNSIGNED,
 	keyword_id BIGINT UNSIGNED NOT NULL,
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (keyword_id) REFERENCES keywords (id)
 		ON DELETE CASCADE
@@ -498,15 +498,15 @@ CREATE TABLE follow_keyword (
 DROP TABLE IF EXISTS follow_genre;
 CREATE TABLE follow_genre (
 	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL,
+	user_id BIGINT UNSIGNED,
 	genre_id BIGINT UNSIGNED NOT NULL,
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (genre_id) REFERENCES genres (id)
 		ON DELETE CASCADE
@@ -516,15 +516,15 @@ CREATE TABLE follow_genre (
 DROP TABLE IF EXISTS follow_list;
 CREATE TABLE follow_list (
 	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL,
+	user_id BIGINT UNSIGNED,
 	list_id BIGINT UNSIGNED NOT NULL,
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_deleted BIT DEFAULT 0,
+	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (list_id) REFERENCES user_lists (id)
 		ON DELETE CASCADE
@@ -535,15 +535,14 @@ CREATE TABLE follow_list (
 
 DROP TABLE IF EXISTS title_gallery;
 CREATE TABLE title_gallery (
-	title_id BIGINT UNSIGNED NOT NULL,
+    id SERIAL PRIMARY KEY,
+	title_id BIGINT UNSIGNED,
 	image_id BIGINT UNSIGNED NOT NULL,
 
-	title_deleted BIT DEFAULT 0,
-
-	PRIMARY KEY (title_id, image_id),
+	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE NO ACTION
+		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (image_id) REFERENCES images (id)
 		ON DELETE CASCADE
