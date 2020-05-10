@@ -472,7 +472,6 @@ VALUES
 	('Assistant Director'),
 	('Special Effects'),
 	('Visual Effects'),
-	('Music'),
 	('Sound designer'),
 	('Stunt');
 
