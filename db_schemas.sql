@@ -65,12 +65,12 @@ CREATE TABLE user_profiles (
 	updated_at TIMESTAMP DEFAULT now(),
 
 	avatar BIGINT UNSIGNED,
-	first_name VARCHAR(100) DEFAULT '',
-	last_name VARCHAR(100) DEFAULT '',
-	gender CHAR(1) DEFAULT '',
+	first_name VARCHAR(100) DEFAULT ' ',
+	last_name VARCHAR(100) DEFAULT ' ',
+	gender CHAR(1) DEFAULT ' ',
 	date_of_birth DATE,
 	country_id BIGINT UNSIGNED,
-	about VARCHAR(350) DEFAULT '',
+	about VARCHAR(350) DEFAULT ' ',
 
 	is_private BIT DEFAULT 0,
 	user_del_id BIGINT DEFAULT NULL,
@@ -123,10 +123,10 @@ CREATE TABLE title_info (
 	title_id BIGINT UNSIGNED,
 	title_type_id BIGINT UNSIGNED,
 	poster BIGINT UNSIGNED,
-	tagline VARCHAR(200) DEFAULT '',
-	-- tagline_eng VARCHAR(200) NOT NULL DEFAULT '',
-	synopsis VARCHAR(500) DEFAULT '',
-	-- synopsis_eng VARCHAR(500) NOT NULL DEFAULT '',
+	tagline VARCHAR(200) DEFAULT ' ',
+	-- tagline_eng VARCHAR(200) NOT NULL DEFAULT ' '',
+	synopsis VARCHAR(500) DEFAULT ' ',
+	-- synopsis_eng VARCHAR(500) NOT NULL DEFAULT ' '',
 	release_date DATE,
 	rars ENUM ('0+', '6+', '12+', '16+', '18+', 'NR') DEFAULT 'NR',
 
@@ -188,7 +188,7 @@ CREATE TABLE people (
 	-- last_name_eng VARCHAR(200),
 	date_of_birth DATE,
 	date_of_death DATE DEFAULT NULL,
-	gender CHAR(1) DEFAULT '',
+	gender CHAR(1) DEFAULT ' ',
 	photo BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
 
@@ -373,8 +373,8 @@ DROP TABLE IF EXISTS user_lists;
 CREATE TABLE user_lists (
 	id SERIAL PRIMARY KEY,
 	user_id BIGINT UNSIGNED,
-	list_name VARCHAR(50) DEFAULT '''',
-	description VARCHAR(100) DEFAULT '''',
+	list_name VARCHAR(50) DEFAULT ' ',
+	description VARCHAR(100) DEFAULT ' ',
 	is_private BIT DEFAULT 0,
 	created_at TIMESTAMP DEFAULT now(),
 
