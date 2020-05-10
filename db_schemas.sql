@@ -245,7 +245,7 @@ CREATE TABLE title_keyword (
 	title_id BIGINT UNSIGNED,
 	keyword_id BIGINT UNSIGNED NOT NULL,
 	user_id BIGINT UNSIGNED,
-	vote BIT,
+	vote BIT DEFAULT 1,
 	created_at TIMESTAMP DEFAULT now(),
 
 	user_del_id BIGINT DEFAULT NULL,
@@ -354,25 +354,9 @@ CREATE TABLE watchlist (
 	id SERIAL PRIMARY KEY,
 	title_id BIGINT UNSIGNED,
 	user_id BIGINT UNSIGNED,
+	is_seen BIT DEFAULT 0,
 	created_at TIMESTAMP DEFAULT now(),
-
-	user_del_id BIGINT DEFAULT NULL,
-	title_del_id BIGINT DEFAULT NULL,
-
-	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE,
-	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE
-);
-
-DROP TABLE IF EXISTS is_seen;
-CREATE TABLE is_seen (
-	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED,
-	user_id BIGINT UNSIGNED,
-	created_at TIMESTAMP DEFAULT now(),
+	updated_at TIMESTAMP DEFAULT now(),
 
 	user_del_id BIGINT DEFAULT NULL,
 	title_del_id BIGINT DEFAULT NULL,
