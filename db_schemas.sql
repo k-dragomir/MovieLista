@@ -111,7 +111,7 @@ DROP TABLE IF EXISTS titles;
 CREATE TABLE titles (
 	id SERIAL PRIMARY KEY,
 	title VARCHAR(100) NOT NULL,
-	original_title VARCHAR(100) NOT NULL DEFAULT '',
+	original_title VARCHAR(100),
 
 	INDEX (title),
 	INDEX (original_title)
@@ -123,12 +123,12 @@ CREATE TABLE title_info (
 	title_id BIGINT UNSIGNED,
 	title_type_id BIGINT UNSIGNED,
 	poster BIGINT UNSIGNED,
-	country_id BIGINT UNSIGNED,
-	tagline VARCHAR(200) NOT NULL DEFAULT '',
+	tagline VARCHAR(200) DEFAULT '',
 	-- tagline_eng VARCHAR(200) NOT NULL DEFAULT '',
-	synopsis VARCHAR(500) NOT NULL DEFAULT '',
+	synopsis VARCHAR(500) DEFAULT '',
 	-- synopsis_eng VARCHAR(500) NOT NULL DEFAULT '',
 	release_date DATE,
+	rars ENUM ('0+', '6+', '12+', '16+', '18+', 'NR') DEFAULT 'NR',
 
 	title_del_id BIGINT DEFAULT NULL,
 
@@ -141,45 +141,6 @@ CREATE TABLE title_info (
 		ON DELETE SET NULL
 		ON UPDATE CASCADE,
 	FOREIGN KEY (poster) REFERENCES images (id)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE
-);
-
-DROP TABLE IF EXISTS series_info;
-CREATE TABLE series_info (
-	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED,
-	seasons SMALLINT UNSIGNED NOT NULL DEFAULT 1,
-	episodes MEDIUMINT UNSIGNED NOT NULL DEFAULT 1,
-	conclude_date DATE,
-
-	title_del_id BIGINT DEFAULT NULL,
-
-	INDEX (seasons),
-	INDEX (episodes),
-
-	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
-		ON UPDATE CASCADE
-);
-
-DROP TABLE IF EXISTS movies_info;
-CREATE TABLE movies_info (
-	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED,
-	rars ENUM ('0+', '6+', '12+', '16+', '18+', 'NR') DEFAULT 'NR',  -- Возрастная классификация информационной продукции
-	mpaa ENUM ('G', 'PG', 'PG-13', 'R', 'NC-17', 'NR') DEFAULT 'NR', -- Система рейтингов Американской киноассоциации
-	budget INT UNSIGNED DEFAULT 0,
-	box_office INT UNSIGNED DEFAULT 0,
-
-	title_del_id BIGINT DEFAULT NULL,
-
-	INDEX (rars),
-	INDEX (mpaa),
-	INDEX (budget),
-	INDEX (box_office),
-
-	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
@@ -227,6 +188,7 @@ CREATE TABLE people (
 	-- last_name_eng VARCHAR(200),
 	date_of_birth DATE,
 	date_of_death DATE DEFAULT NULL,
+	gender CHAR(1) DEFAULT '',
 	photo BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
 

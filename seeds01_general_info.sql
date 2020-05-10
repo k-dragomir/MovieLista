@@ -31,7 +31,7 @@ VALUES
 	('Towne and Sons'),
 	('Weimann, Miller and White');
 
-INSERT INTO countries -- 6
+INSERT INTO countries -- 240
 	(country)
 VALUES
 	('Afghanistan'),
@@ -275,7 +275,7 @@ VALUES
 	('Zambia'),
 	('Zimbabwe');
 
-INSERT INTO genres
+INSERT INTO genres -- 22
 	(genre)
 VALUES
 	('Action'),
