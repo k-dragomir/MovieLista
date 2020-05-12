@@ -60,7 +60,6 @@ END;
 //
 DELIMITER ;
 
-SELECT wavg_rating(3);
 
 
 CREATE OR REPLACE VIEW title_ratings AS
