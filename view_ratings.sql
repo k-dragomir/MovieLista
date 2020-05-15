@@ -61,18 +61,21 @@ END;
 DELIMITER ;
 
 
-
-CREATE OR REPLACE VIEW title_ratings AS
+CREATE OR REPLACE ALGORITHM = TEMPTABLE VIEW title_ratings AS
 	SELECT t.id,
 		   t.title AS title,
-		   round(avg(r.rating)) AS avg_rating,     -- Average rating
-		   round(wavg_rating(t.id)) AS wavg_rating -- Weighted average rating
+		   r.avg_rating,
+		   r.wavg_rating,
+		   r.count
 	  FROM titles AS t
-			   INNER JOIN rating AS r ON t.id = r.title_id
-	 GROUP BY
-		 t.id
-	 ORDER BY
-		 t.id;
+			   LEFT JOIN (SELECT title_id,
+								 round(avg(rating)) AS avg_rating,
+								 round(wavg_rating(rating.title_id)) AS wavg_rating,
+								 count(rating) AS count
+							FROM rating
+						   GROUP BY title_id
+						 ) AS r ON r.title_id = t.id
+ORDER BY t.id;
 
 -- TOP 10
 
@@ -89,3 +92,5 @@ SELECT title,
  ORDER BY
 	 wavg_rating DESC
  LIMIT 10;
+
+-- DROP VIEW IF EXISTS title_ratings;
