@@ -7,42 +7,38 @@ USE movielista;
 DROP TABLE IF EXISTS companies;
 CREATE TABLE companies (
 	id SERIAL PRIMARY KEY,
-	company VARCHAR(200) UNIQUE
+	company VARCHAR(200) UNIQUE NOT NULL
 );
 
 DROP TABLE IF EXISTS countries;
 CREATE TABLE countries (
 	id SERIAL PRIMARY KEY,
-	country VARCHAR(200) UNIQUE
-	-- , country_eng VARCHAR(200)
+	country VARCHAR(200) UNIQUE NOT NULL
 );
 
 DROP TABLE IF EXISTS genres;
 CREATE TABLE genres (
 	id SERIAL PRIMARY KEY,
-	genre VARCHAR(200) UNIQUE
-	-- , genre_eng VARCHAR(200)
+	genre VARCHAR(200) UNIQUE NOT NULL
 );
 
 DROP TABLE IF EXISTS images;
 CREATE TABLE images (
 	id SERIAL PRIMARY KEY,
-	filename VARCHAR(200),
-	path VARCHAR(200)
+	filename VARCHAR(200) NOT NULL,
+	path VARCHAR(200) NOT NULL
 );
 
 DROP TABLE IF EXISTS roles;
 CREATE TABLE roles (
 	id SERIAL PRIMARY KEY,
-	role VARCHAR(200) UNIQUE
-	-- , role_eng VARCHAR(200)
+	role VARCHAR(200) UNIQUE NOT NULL
 );
 
 DROP TABLE IF EXISTS title_types;
 CREATE TABLE title_types (
 	id SERIAL PRIMARY KEY,
-	title_type VARCHAR(200) UNIQUE
-	-- , title_type_eng VARCHAR(200)
+	title_type VARCHAR(200) UNIQUE NOT NULL
 );
 
 -- ----------------------------------- USERS
@@ -67,7 +63,7 @@ CREATE TABLE user_profiles (
 	avatar BIGINT UNSIGNED,
 	first_name VARCHAR(100) DEFAULT ' ',
 	last_name VARCHAR(100) DEFAULT ' ',
-	gender CHAR(1) DEFAULT ' ',
+	gender ENUM('m', 'f', 'nb', 'ud') DEFAULT 'ud',
 	date_of_birth DATE,
 	country_id BIGINT UNSIGNED,
 	about VARCHAR(350) DEFAULT ' ',
@@ -124,9 +120,7 @@ CREATE TABLE title_info (
 	title_type_id BIGINT UNSIGNED,
 	poster BIGINT UNSIGNED,
 	tagline VARCHAR(200) DEFAULT ' ',
-	-- tagline_eng VARCHAR(200) NOT NULL DEFAULT ' '',
 	synopsis VARCHAR(500) DEFAULT ' ',
-	-- synopsis_eng VARCHAR(500) NOT NULL DEFAULT ' '',
 	release_date DATE,
 	rars ENUM ('0+', '6+', '12+', '16+', '18+', 'NR') DEFAULT 'NR',
 
@@ -135,7 +129,7 @@ CREATE TABLE title_info (
 	INDEX (release_date),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (title_type_id) REFERENCES title_types (id)
 		ON DELETE SET NULL
@@ -156,7 +150,7 @@ CREATE TABLE title_country (
 	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (country_id) REFERENCES countries (id)
 		ON DELETE SET NULL
@@ -172,27 +166,25 @@ CREATE TABLE title_company (
 	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (company_id) REFERENCES companies (id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
-DROP TABLE IF EXISTS people;
-CREATE TABLE people (
+DROP TABLE IF EXISTS creators;
+CREATE TABLE creators (
 	id SERIAL PRIMARY KEY,
 	first_name VARCHAR(200),
-	-- first_name_eng VARCHAR(200),
 	last_name VARCHAR(200),
-	-- last_name_eng VARCHAR(200),
 	date_of_birth DATE,
 	date_of_death DATE DEFAULT NULL,
 	gender CHAR(1) DEFAULT ' ',
 	photo BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
 
-	INDEX person_name_idx (first_name, last_name),
+	INDEX creator_name_idx (first_name, last_name),
 
 	FOREIGN KEY (photo) REFERENCES images (id)
 		ON DELETE SET NULL
@@ -202,45 +194,42 @@ CREATE TABLE people (
 		ON UPDATE CASCADE
 );
 
-DROP TABLE IF EXISTS title_cast_crew;
-CREATE TABLE title_cast_crew (
+DROP TABLE IF EXISTS cast_and_crew;
+CREATE TABLE cast_and_crew (
 	id SERIAL PRIMARY KEY,
 	title_id BIGINT UNSIGNED,
 	role_id BIGINT UNSIGNED,
-	people_id BIGINT UNSIGNED,
+	creator_id BIGINT UNSIGNED,
 
 	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (role_id) REFERENCES roles (id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE,
-	FOREIGN KEY (people_id) REFERENCES people (id)
+	FOREIGN KEY (creator_id) REFERENCES creators (id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
 -- ----------------------------------- TITLES INFO, INFLUENCED BY USERS
 
-DROP TABLE IF EXISTS keywords;
-CREATE TABLE keywords (
+DROP TABLE IF EXISTS all_keywords;
+CREATE TABLE all_keywords (
 	id SERIAL PRIMARY KEY,
 	user_id BIGINT UNSIGNED,
 	keyword VARCHAR(100) UNIQUE,
 	created_at TIMESTAMP DEFAULT now(),
-
-	INDEX (keyword),
-	INDEX (keyword),
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE SET NULL -- Ключевое слово остается даже после удаления пользователя
 		ON UPDATE CASCADE
 );
 
-DROP TABLE IF EXISTS title_keyword;
-CREATE TABLE title_keyword (
+DROP TABLE IF EXISTS votes_on_keywords;
+CREATE TABLE votes_on_keywords (
 	id SERIAL PRIMARY KEY,
 	title_id BIGINT UNSIGNED,
 	keyword_id BIGINT UNSIGNED NOT NULL,
@@ -252,18 +241,18 @@ CREATE TABLE title_keyword (
 	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
-	FOREIGN KEY (keyword_id) REFERENCES keywords (id)
-		ON DELETE CASCADE
+	FOREIGN KEY (keyword_id) REFERENCES all_keywords (id)
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
-DROP TABLE IF EXISTS title_genre;
-CREATE TABLE title_genre (
+DROP TABLE IF EXISTS votes_on_genre;
+CREATE TABLE votes_on_genre (
 	id SERIAL PRIMARY KEY,
 	title_id BIGINT UNSIGNED,
 	genre_id BIGINT UNSIGNED NOT NULL,
@@ -275,7 +264,7 @@ CREATE TABLE title_genre (
 	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (genre_id) REFERENCES genres (id)
 		ON DELETE CASCADE
@@ -300,7 +289,7 @@ CREATE TABLE rating (
 	INDEX (rating),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE SET NULL
@@ -322,15 +311,15 @@ CREATE TABLE reviews (
 	INDEX (is_positive),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE
 );
 
-DROP TABLE IF EXISTS review_votes;
-CREATE TABLE review_votes (
+DROP TABLE IF EXISTS votes_on_reviews;
+CREATE TABLE votes_on_reviews (
 	id SERIAL PRIMARY KEY,
 	review_id BIGINT UNSIGNED NOT NULL,
 	user_id BIGINT UNSIGNED,
@@ -362,7 +351,7 @@ CREATE TABLE watchlist (
 	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE SET NULL
@@ -401,7 +390,7 @@ CREATE TABLE user_list_items (
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (title_id) REFERENCES titles (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -436,7 +425,7 @@ CREATE TABLE follow_keyword (
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE SET NULL
 		ON UPDATE CASCADE,
-	FOREIGN KEY (keyword_id) REFERENCES keywords (id)
+	FOREIGN KEY (keyword_id) REFERENCES all_keywords (id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
@@ -482,7 +471,7 @@ CREATE TABLE follow_list (
 DROP TABLE IF EXISTS deleted_users;
 CREATE TABLE deleted_users (
 	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL UNIQUE ,
+	user_id BIGINT UNSIGNED NOT NULL UNIQUE,
 	signed_up_at DATETIME,
 
 	email VARCHAR(100) UNIQUE,
@@ -491,17 +480,4 @@ CREATE TABLE deleted_users (
 	password_hash VARCHAR(100),
 
 	deleted_at TIMESTAMP DEFAULT now()
-);
-
-DROP TABLE IF EXISTS deleted_titles;
-CREATE TABLE deleted_titles (
-	id SERIAL PRIMARY KEY,
-	title_id BIGINT UNSIGNED NOT NULL UNIQUE,
-	title VARCHAR(100) NOT NULL,
-	original_title VARCHAR(100) NOT NULL,
-
-	deleted_at TIMESTAMP DEFAULT now(),
-
-	INDEX (title),
-	INDEX (original_title)
 );
