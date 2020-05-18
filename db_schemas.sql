@@ -174,7 +174,7 @@ CREATE TABLE creators (
 	last_name VARCHAR(200),
 	date_of_birth DATE,
 	date_of_death DATE DEFAULT NULL,
-	gender CHAR(1) DEFAULT ' ',
+	gender ENUM('m', 'f', 'nb', 'ud') DEFAULT 'ud',
 	photo BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
 
