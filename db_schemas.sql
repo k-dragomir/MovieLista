@@ -74,7 +74,7 @@ CREATE TABLE user_profiles (
 	INDEX user_name_idx (first_name, last_name),
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (avatar) REFERENCES images (id)
 		ON DELETE SET NULL
@@ -124,8 +124,6 @@ CREATE TABLE title_info (
 	release_date DATE,
 	rars ENUM ('0+', '6+', '12+', '16+', '18+', 'NR') DEFAULT 'NR',
 
-	title_del_id BIGINT DEFAULT NULL,
-
 	INDEX (release_date),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
@@ -147,8 +145,6 @@ CREATE TABLE title_country (
 	title_id BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
 
-	title_del_id BIGINT DEFAULT NULL,
-
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
@@ -162,8 +158,6 @@ CREATE TABLE title_company (
 	id SERIAL PRIMARY KEY,
 	title_id BIGINT UNSIGNED,
 	company_id BIGINT UNSIGNED,
-
-	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
@@ -201,8 +195,6 @@ CREATE TABLE cast_and_crew (
 	role_id BIGINT UNSIGNED,
 	creator_id BIGINT UNSIGNED,
 
-	title_del_id BIGINT DEFAULT NULL,
-
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
@@ -224,7 +216,7 @@ CREATE TABLE all_keywords (
 	created_at TIMESTAMP DEFAULT now(),
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL -- Ключевое слово остается даже после удаления пользователя
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -238,7 +230,6 @@ CREATE TABLE votes_on_keywords (
 	created_at TIMESTAMP DEFAULT now(),
 
 	user_del_id BIGINT DEFAULT NULL,
-	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
@@ -247,7 +238,7 @@ CREATE TABLE votes_on_keywords (
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -261,7 +252,6 @@ CREATE TABLE votes_on_genre (
 	created_at TIMESTAMP DEFAULT now(),
 
 	user_del_id BIGINT DEFAULT NULL,
-	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
@@ -270,7 +260,7 @@ CREATE TABLE votes_on_genre (
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -284,7 +274,6 @@ CREATE TABLE rating (
 	updated_at TIMESTAMP DEFAULT now(),
 
 	user_del_id BIGINT DEFAULT NULL,
-	title_del_id BIGINT DEFAULT NULL,
 
 	INDEX (rating),
 
@@ -292,7 +281,7 @@ CREATE TABLE rating (
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -306,7 +295,6 @@ CREATE TABLE reviews (
 	created_at TIMESTAMP DEFAULT now(),
 
 	user_del_id BIGINT DEFAULT NULL,
-	title_del_id BIGINT DEFAULT NULL,
 
 	INDEX (is_positive),
 
@@ -314,7 +302,7 @@ CREATE TABLE reviews (
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -332,7 +320,7 @@ CREATE TABLE votes_on_reviews (
 		ON DELETE CASCADE
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -348,13 +336,12 @@ CREATE TABLE watchlist (
 	updated_at TIMESTAMP DEFAULT now(),
 
 	user_del_id BIGINT DEFAULT NULL,
-	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -373,7 +360,7 @@ CREATE TABLE user_lists (
 	INDEX (is_private),
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE
 );
 
@@ -383,8 +370,6 @@ CREATE TABLE user_list_items (
 	list_id BIGINT UNSIGNED NOT NULL,
 	title_id BIGINT UNSIGNED,
 	created_at TIMESTAMP DEFAULT now(),
-
-	title_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (list_id) REFERENCES user_lists (id)
 		ON DELETE CASCADE
@@ -423,7 +408,7 @@ CREATE TABLE follow_keyword (
 	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (keyword_id) REFERENCES all_keywords (id)
 		ON DELETE CASCADE
@@ -441,7 +426,7 @@ CREATE TABLE follow_genre (
 	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (genre_id) REFERENCES genres (id)
 		ON DELETE CASCADE
@@ -459,14 +444,14 @@ CREATE TABLE follow_list (
 	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
-		ON DELETE SET NULL
+		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
 	FOREIGN KEY (list_id) REFERENCES user_lists (id)
 		ON DELETE CASCADE
 		ON UPDATE CASCADE
 );
 
--- ----------------------------------- DELETED TO RESTORE
+/*-- ----------------------------------- DELETED TO RESTORE
 
 DROP TABLE IF EXISTS deleted_users;
 CREATE TABLE deleted_users (
@@ -480,4 +465,4 @@ CREATE TABLE deleted_users (
 	password_hash VARCHAR(100),
 
 	deleted_at TIMESTAMP DEFAULT now()
-);
+);*/
