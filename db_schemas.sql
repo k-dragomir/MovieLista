@@ -48,9 +48,9 @@ CREATE TABLE users (
 	id SERIAL PRIMARY KEY,
 	signed_up_at TIMESTAMP DEFAULT now(),
 
+	username VARCHAR(50) UNIQUE,
 	email VARCHAR(100) UNIQUE,
 	phone_number BIGINT UNSIGNED UNIQUE,
-	username VARCHAR(50) UNIQUE,
 	password_hash VARCHAR(100)
 );
 
@@ -60,10 +60,10 @@ CREATE TABLE user_profiles (
 	user_id BIGINT UNSIGNED,
 	updated_at TIMESTAMP DEFAULT now(),
 
-	avatar BIGINT UNSIGNED,
+	avatar BIGINT UNSIGNED DEFAULT 1,
 	first_name VARCHAR(100) DEFAULT ' ',
 	last_name VARCHAR(100) DEFAULT ' ',
-	gender ENUM('m', 'f', 'nb', 'ud') DEFAULT 'ud',
+	gender ENUM ('m', 'f', 'nb', 'ud') DEFAULT 'ud',
 	date_of_birth DATE,
 	country_id BIGINT UNSIGNED,
 	about VARCHAR(350) DEFAULT ' ',
@@ -107,7 +107,7 @@ DROP TABLE IF EXISTS titles;
 CREATE TABLE titles (
 	id SERIAL PRIMARY KEY,
 	title VARCHAR(100) NOT NULL,
-	original_title VARCHAR(100),
+	original_title VARCHAR(100) DEFAULT ' ',
 
 	INDEX (title),
 	INDEX (original_title)
@@ -117,8 +117,8 @@ DROP TABLE IF EXISTS title_info;
 CREATE TABLE title_info (
 	id SERIAL PRIMARY KEY,
 	title_id BIGINT UNSIGNED,
-	title_type_id BIGINT UNSIGNED,
-	poster BIGINT UNSIGNED,
+	title_type_id BIGINT UNSIGNED DEFAULT 1,
+	poster BIGINT UNSIGNED DEFAULT 2,
 	tagline VARCHAR(200) DEFAULT ' ',
 	synopsis VARCHAR(500) DEFAULT ' ',
 	release_date DATE,
@@ -174,7 +174,7 @@ CREATE TABLE creators (
 	last_name VARCHAR(200),
 	date_of_birth DATE,
 	date_of_death DATE DEFAULT NULL,
-	gender ENUM('m', 'f', 'nb', 'ud') DEFAULT 'ud',
+	gender ENUM ('m', 'f', 'nb', 'ud') DEFAULT 'ud',
 	photo BIGINT UNSIGNED,
 	country_id BIGINT UNSIGNED,
 
