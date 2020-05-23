@@ -6,7 +6,7 @@ USE movielista;
 
 -- ----------------------------------- COUNTRIES GENERAL INFO view
 CREATE OR REPLACE VIEW countries_info AS
-	SELECT c.id AS c_id,
+	SELECT c.id as c_id,
 		   c.country,
 		   tc.c1 AS all_titles,
 		   up.c2 AS all_users,
@@ -51,7 +51,7 @@ CREATE OR REPLACE VIEW titles_and_countries AS
 CREATE OR REPLACE VIEW titles_and_companies AS
 	SELECT t.id AS t_id,
 		   t.title,
-		   c.id AS c_id,
+		   c.id AS comp_id,
 		   c.company
 	  FROM titles t
 			   JOIN title_company tc ON t.id = tc.title_id
@@ -67,11 +67,11 @@ CREATE OR REPLACE VIEW titles_and_cast AS
 		   t.title,
 		   r.id AS r_id,
 		   r.role,
-		   c.id AS c_id,
-		   concat_ws(' ', c.first_name, c.last_name) AS name,
+		   cr.id AS cr_id,
+		   concat_ws(' ', cr.first_name, cr.last_name) AS name,
 		   ti.release_date
-	  FROM creators c
-			   INNER JOIN cast_and_crew cac ON c.id = cac.creator_id
+	  FROM creators cr
+			   INNER JOIN cast_and_crew cac ON cr.id = cac.creator_id
 			   INNER JOIN titles t ON cac.title_id = t.id
 			   INNER JOIN roles r ON cac.role_id = r.id
 			   INNER JOIN title_info ti ON t.id = ti.title_id
@@ -181,7 +181,7 @@ CREATE OR REPLACE VIEW titles_and_keywords AS
 CREATE OR REPLACE VIEW reviews_info AS
 	SELECT r.title_id AS t_id,
 		   t.title,
-		   r.id AS r_id,
+		   r.id AS rev_id,
 		   r.body,
 		   CASE (r.is_positive)
 			   WHEN 1 THEN 'positive'
@@ -203,7 +203,7 @@ CREATE OR REPLACE VIEW reviews_info AS
 
 
 -- ----------------------------------- TITLES PROFILES view
-CREATE OR REPLACE ALGORITHM = TEMPTABLE VIEW t_profiles AS
+CREATE OR REPLACE VIEW t_profiles AS
 	SELECT t.id AS t_id,
 		   t.title,
 		   tt.title_type,
@@ -346,6 +346,7 @@ CREATE OR REPLACE VIEW cr_profiles AS
 		   cr_r.role,
 		   cr_r.r_count,
 		   cr.date_of_birth,
+	       cn.id AS c_id,
 		   cn.country
 	  FROM creators cr
 			   JOIN countries cn ON cr.country_id = cn.id
