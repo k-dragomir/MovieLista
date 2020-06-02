@@ -69,7 +69,6 @@ CREATE TABLE user_profiles (
 	about VARCHAR(350) DEFAULT ' ',
 
 	is_private BIT DEFAULT 0,
-	user_del_id BIGINT DEFAULT NULL,
 
 	INDEX user_name_idx (first_name, last_name),
 
@@ -229,8 +228,6 @@ CREATE TABLE votes_on_keywords (
 	vote BIT DEFAULT 1,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_del_id BIGINT DEFAULT NULL,
-
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
@@ -251,7 +248,7 @@ CREATE TABLE votes_on_genre (
 	vote BIT,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_del_id BIGINT DEFAULT NULL,
+
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
@@ -273,8 +270,6 @@ CREATE TABLE rating (
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_del_id BIGINT DEFAULT NULL,
-
 	INDEX (rating),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
@@ -294,8 +289,6 @@ CREATE TABLE reviews (
 	is_positive BIT DEFAULT 1,
 	created_at TIMESTAMP DEFAULT now(),
 
-	user_del_id BIGINT DEFAULT NULL,
-
 	INDEX (is_positive),
 
 	FOREIGN KEY (title_id) REFERENCES titles (id)
@@ -313,8 +306,6 @@ CREATE TABLE votes_on_reviews (
 	user_id BIGINT UNSIGNED,
 	vote BIT,
 	created_at TIMESTAMP DEFAULT now(),
-
-	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (review_id) REFERENCES reviews (id)
 		ON DELETE CASCADE
@@ -335,8 +326,6 @@ CREATE TABLE watchlist (
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_del_id BIGINT DEFAULT NULL,
-
 	FOREIGN KEY (title_id) REFERENCES titles (id)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
@@ -353,8 +342,6 @@ CREATE TABLE user_lists (
 	description VARCHAR(100) DEFAULT ' ',
 	is_private BIT DEFAULT 0,
 	created_at TIMESTAMP DEFAULT now(),
-
-	user_del_id BIGINT DEFAULT NULL,
 
 	INDEX (list_name),
 	INDEX (is_private),
@@ -405,8 +392,6 @@ CREATE TABLE follow_keyword (
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_del_id BIGINT DEFAULT NULL,
-
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
@@ -422,8 +407,6 @@ CREATE TABLE follow_genre (
 	genre_id BIGINT UNSIGNED NOT NULL,
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
-
-	user_del_id BIGINT DEFAULT NULL,
 
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE RESTRICT
@@ -441,8 +424,6 @@ CREATE TABLE follow_list (
 	created_at TIMESTAMP DEFAULT now(),
 	updated_at TIMESTAMP DEFAULT now(),
 
-	user_del_id BIGINT DEFAULT NULL,
-
 	FOREIGN KEY (user_id) REFERENCES users (id)
 		ON DELETE RESTRICT
 		ON UPDATE CASCADE,
@@ -451,21 +432,6 @@ CREATE TABLE follow_list (
 		ON UPDATE CASCADE
 );
 
-/*-- ----------------------------------- DELETED TO RESTORE
-
-DROP TABLE IF EXISTS deleted_users;
-CREATE TABLE deleted_users (
-	id SERIAL PRIMARY KEY,
-	user_id BIGINT UNSIGNED NOT NULL UNIQUE,
-	signed_up_at DATETIME,
-
-	email VARCHAR(100) UNIQUE,
-	phone_number BIGINT UNSIGNED UNIQUE,
-	username VARCHAR(50) UNIQUE,
-	password_hash VARCHAR(100),
-
-	deleted_at TIMESTAMP DEFAULT now()
-);*/
 
 
 -- ---------------------------------------------------------
